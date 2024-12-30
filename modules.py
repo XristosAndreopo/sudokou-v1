@@ -1,54 +1,140 @@
 import random
 
-
-# Check if placing a number in the grid of sudoku is valid
-# Returns True if placement is valid
-# Returns False if placement in not valid
-def is_placement_valid(rand_grid, row, col, num):
-
+""" 
+    1. Check if placing a number in the grid of sudoku is valid
+    2. Returns: a. True if placement is valid
+                b. Returns False if placement in not valid
+    3. Inputs:  a. grid: the grid we want to check if placement is valid
+                b. row: the row witch the number we want to check is located
+                g. col: the col witch the number we want to check is located
+"""
+def is_placement_valid(grid, row, col, num):
     # Check if placing num in row is valid
-    if num in rand_grid[row]:
+    if num in grid[row]:
         return False
-
     # Check if placing num in col is valid
-    if num in [rand_grid[i][col] for i in range(9)]:
+    if num in [grid[i][col] for i in range(9)]:
         return False
-
     #Check if placing num in sub grid 3x3 is valid
     start_row, start_col = 3 * (row // 3), 3 * (col // 3)
     for i in range(start_row,start_row+3):
         for j in range(start_col,start_col+3):
-            if rand_grid[i][j] == num:
+            if grid[i][j] == num:
                 return False
     return True
 
-# Populate sudoku grid with random numbers from 1 to 9
-# Returns True if the grid is populated
-# Returns False if the grid is not populated
-def fill_grid(random_grid):
-    # Populate the grid with random numbers between 1 and 9
-    # Loop through rows
+
+""" 
+    1. Checks if a subgrid has zeros
+    2. Returns: a. True if it has at least one zero
+                b. False if it has no zeros 
+    3. Inputs:  a. grid: the grid we want to check
+                b. row: the start row of subgrid
+                g. col: the start col of subgrid
+"""
+def check_subgrid_has_zero(grid, row, col):
+    for i in range(row, row+3):
+        for j in range(col, col+3):
+            if grid[i][j] ==0:
+                return True
+    return False
+
+
+""" 
+    1. Randomly populate the diagonal sub grids of sudoku puzzle
+       The initial sudoku grid has to be a zero grid
+    2. Returns: sudoku grid with populated the diagonal sub grids
+    3. Inputs:  grid: the grid we want to check if placement is valid
+"""
+def random_populate_diagonal_sub_grids(grid):
+    sub_grid_1 = [1, 2, 3, 4, 5, 6, 7, 8, 9]
+    sub_grid_5 = [1, 2, 3, 4, 5, 6, 7, 8, 9]
+    sub_grid_9 = [1, 2, 3, 4, 5, 6, 7, 8, 9]
+    # Populate 1st diagonal sub grid
+    for row in range(0,3):
+        for col in range(0,3):
+            grid[row][col] = random.choice(sub_grid_1)
+            sub_grid_1.remove(grid[row][col])
+    # Populate 2st diagonal sub grid
+    for row in range(3,6):
+        for col in range(3,6):
+            grid[row][col] = random.choice(sub_grid_5)
+            sub_grid_5.remove(grid[row][col])
+    # # Populate 3st diagonal sub grid
+    for row in range(6,9):
+        for col in range(6,9):
+            grid[row][col] = random.choice(sub_grid_9)
+            sub_grid_9.remove(grid[row][col])
+    return grid
+
+
+""" 
+    1. Randomly populate a sub grid of sudoku puzzle
+       The initial sudoku grid has to be a zero grid
+    2. Returns: sudoku grid with populated the sub grid
+    3. Inputs:  grid: the grid we want to check if placement is valid
+"""
+
+def random_populate_sub_grid(grid, start_row, start_col):
+    list_number = [1, 2, 3, 4, 5, 6, 7, 8, 9]
+    # Populate 3nd sub grid
+    for row in range(start_row,start_row+3):
+        for col in range(start_col,start_col+3):
+            num = random.choice(list_number)
+            if is_placement_valid(grid, row, col, num):
+                grid[row][col] = num
+                list_number.remove(num)
+    if check_subgrid_has_zero(grid, start_row, start_col):
+        # uncomment next line to see number of recursions
+        # print("recursion")
+        random_populate_sub_grid(grid, start_row, start_col)
+    return grid
+
+
+"""
+    1. Populate sudoku grid with random numbers from 1 to 9. It implements 
+    function random_populate_diagonal_sub_grids()
+    2. Return's the sudoku grid filled with numbers
+    3. Inputs:  grid: the grid we want to fill with numbers
+"""
+def fill_grid(grid):
+    try:
+        # Call functions to randomly populate grid
+        filled_grid = random_populate_diagonal_sub_grids(grid)
+        filled_grid = random_populate_sub_grid(filled_grid, 0, 6)
+        filled_grid = random_populate_sub_grid(filled_grid, 6,0)
+        filled_grid = random_populate_sub_grid(filled_grid, 0,3)
+        filled_grid = random_populate_sub_grid(filled_grid, 3, 0)
+        filled_grid = random_populate_sub_grid(filled_grid, 6, 3)
+        filled_grid = random_populate_sub_grid(filled_grid, 3, 6)
+
+    except RecursionError:
+        fill_grid(grid)
+        # uncomment next line to see number of recursions
+        # rint("Second Row of recursions")
+
+    return filled_grid
+
+"""
+    1. Check's if the sudoku grid is filled with only numbers
+    2. Return:  a. True if all cells have no zeros
+                b. False if there is at least one zero
+    3. Inputs:  grid: the grid we want to check if placement is valid
+"""
+def is_filled(grid):
+    #loop through the grid
     for row in range(9):
-        # Loop through columns
         for col in range(9):
-            # Find empty cell
-            if random_grid[row][col] == 0:
-                #try numbers in random order
-                for num in random.sample(range(1, 10), 9):
-                    if is_placement_valid(random_grid, row, col, num):
-                        random_grid[row][col] = num
-                        #Because we will get zeros in grid due to randomness
-                        #we call the function again
-                        if fill_grid(random_grid):
-                            return True
-                        random_grid[row][col] = 0
+            if grid[row][col] == 0:
                 return False
     return True
 
-
-# Generate the sudoku grid from a zero grid, implementing
-# def fill_grid(random_grid) function
-# Returns a list 9 x 9 as the grid of a sudoku puzzle
+"""
+    1. Main function of modules.py, Generate our sudoku grid
+    2. Return:  a. Random Sudoku Grid if is_filled() is true
+                b. Zero Sudoku Grid if is_filled() is False
+    3. Inputs:  None
+"""
 def generate_sudoku():
     # Create a zero sudoku grid
     sudoku_grid = [
@@ -62,18 +148,20 @@ def generate_sudoku():
         [0, 0, 0, 0, 0, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 0, 0, 0, 0]
     ]
-    # Call the function to fill the grid to get our sodoku_grid
-    fill_grid(sudoku_grid)
+    filled_grid = fill_grid(sudoku_grid)
+    return filled_grid
 
-    return sudoku_grid
 
 # Remove numbers for the sudoku grid according to level and place 0
 # return a grid for player to play with some cells set to 0
+
+# PREPEI NA TO KSANADW GT PREPEI NA SIGOYRECV OTI MPORW NA BRW TH LYSH\
+
 def remove_numbers(sudoku_grid, level):
     # Setting the amount of cells to be removed according to level
     difficulty = {
         "Easy": 35,
-        "Advance": 45,
+        "Advanced": 45,
         "Expert": 60
     }
     removed_numbers_sudoku = sudoku_grid
@@ -109,7 +197,7 @@ def is_solved(original_grid, solved_player_grid):
                 return False
     return True
 
-#implement player moves, B4 9, undo, reset
+# implement player moves, B4 9, undo, reset
 
 def print_sudoku(grid):
     for i in range(9):
@@ -121,21 +209,3 @@ def print_sudoku(grid):
             print(grid[i][j] if grid[i][j] != 0 else ".", end=" ")
         print()  # New line after each row
 
-if __name__ =='__main__':
-    grid = generate_sudoku()
-    print(grid)
-    level = input("Please choose Easy, Advance, Expert to set the level of sudoku:")
-    player_grid = remove_numbers(grid, level=level)
-    print(grid)
-    print(player_grid)
-    print_sudoku(player_grid)
-    play = True
-    while play:
-        player_row = int(input("Enter a row between 1 to 9:"))-1
-        player_col = int(input("Enter a column between 1 to 9:"))-1
-        player_number = input("Enter a number between 1 to 9:")
-        player_grid = update_player_grid(grid, player_grid, player_row, player_col, player_number)
-        if is_solved(grid, player_grid):
-            print("Congratulations! You Solved the Puzzle")
-            play = False
-        print_sudoku(player_grid)

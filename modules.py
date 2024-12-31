@@ -1,5 +1,6 @@
 import random
 
+
 """ 
     1. Check if placing a number in the grid of sudoku is valid
     2. Returns: a. True if placement is valid
@@ -7,6 +8,7 @@ import random
     3. Inputs:  a. grid: the grid we want to check if placement is valid
                 b. row: the row witch the number we want to check is located
                 g. col: the col witch the number we want to check is located
+                d. num: The number we want to check
 """
 def is_placement_valid(grid, row, col, num):
     # Check if placing num in row is valid
@@ -90,7 +92,6 @@ def random_populate_sub_grid(grid, start_row, start_col):
         random_populate_sub_grid(grid, start_row, start_col)
     return grid
 
-
 """
     1. Populate sudoku grid with random numbers from 1 to 9. It implements 
     function random_populate_diagonal_sub_grids()
@@ -107,30 +108,15 @@ def fill_grid(grid):
         filled_grid = random_populate_sub_grid(filled_grid, 3, 0)
         filled_grid = random_populate_sub_grid(filled_grid, 6, 3)
         filled_grid = random_populate_sub_grid(filled_grid, 3, 6)
-
     except RecursionError:
         fill_grid(grid)
         # uncomment next line to see number of recursions
-        # rint("Second Row of recursions")
-
+        # print("Second Row of recursions")
     return filled_grid
 
-"""
-    1. Check's if the sudoku grid is filled with only numbers
-    2. Return:  a. True if all cells have no zeros
-                b. False if there is at least one zero
-    3. Inputs:  grid: the grid we want to check if placement is valid
-"""
-def is_filled(grid):
-    #loop through the grid
-    for row in range(9):
-        for col in range(9):
-            if grid[row][col] == 0:
-                return False
-    return True
 
 """
-    1. Main function of modules.py, Generate our sudoku grid
+    1. Main function of modules.py. Generate our sudoku grid
     2. Return:  a. Random Sudoku Grid if is_filled() is true
                 b. Zero Sudoku Grid if is_filled() is False
     3. Inputs:  None

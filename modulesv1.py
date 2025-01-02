@@ -284,8 +284,7 @@ def has_not_45_sums(grid):
 
 """
     1. Main function of modules.py. Generate our sudoku grid
-    2. Return:  a. Random Sudoku Grid if is_filled() is true
-                b. Zero Sudoku Grid if is_filled() is False
+    2. Return:  a. Sudoku Grid 
     3. Inputs:  None
 """
 def generate_sudoku():

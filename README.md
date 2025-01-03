@@ -16,14 +16,14 @@ Read Instructions.txt
 The task is to generate a 9 x 9 Sudoku grid having k empty cells while following
 the below set of **rules**:
 
-1. In all 9 submatrices 3×3, the elements should be 1-9, without repetition.
+1. In all 9 sub matrices 3×3, the elements should be 1-9, without repetition.
 2. In all rows, there should be elements between 1-9, without repetition.
 3. In all columns, there should be elements between 1-9, without repetition.
 
 In 9x9 matrix, the diagonal matrices are independent of other empty matrices
 initially.
 
-Approach:
+Approach No1(modulesV1.py):
 
 1. Fill all the diagonal 3×3 matrices.
 2. Fill recursively the two matrices (not the ones in the diagonal line), which
@@ -32,7 +32,7 @@ We pick these two because, since the diagonal matrices are filled, the maximum
 number of rules above are met. So we achieve minimum recursions with the right
 numbers placed in cells.
 3. Generate a cube, 9x9x9 with possible solutions
-4. Loop through the cube and if cube[i][j] has len 1, there is one possible 
+4. Loop through the cube and if cube[][] has len 1, there is one possible 
 solution, so we place it in sudoku puzzle. Generate again a cube with possible
 solutions. We loop through 36 times because if we pass the second step 
 36 cells remain empty.
@@ -42,6 +42,11 @@ possible solutions, which met the criteria of the rules.
 7. If sum of rows and columns is not 45, populate the grid again from step 1
 to 5.
 
+Approach No2 (modules.py):
+
+1. Fill all the diagonal 3×3 matrices.
+2. Fill recursively the rest of the matrices. 
+3. if maximum number of recursion occur, run the program again.
 
 ### Installation
 

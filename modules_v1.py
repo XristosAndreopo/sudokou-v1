@@ -91,33 +91,6 @@ def random_populate_sub_grid(grid, start_row, start_col):
         random_populate_sub_grid(grid, start_row, start_col)
     return grid
 
-def find_possible_solutions(grid):
-    """
-    Create a 9x9x9 cube. The third dimension are the possible solutions.
-    :param grid: the grid we want to find the possible solutions of.
-    :return: a cube with possible solutions.
-    """
-    list_numbers = [1, 2, 3, 4, 5, 6, 7, 8, 9]
-    cube = [
-        [[0], [0], [0], [], [], [], [], [], []],
-        [[0], [0], [0], [], [], [], [], [], []],
-        [[0], [0], [0], [], [], [], [], [], []],
-        [[], [], [], [0], [0], [0], [], [], []],
-        [[], [], [], [0], [0], [0], [], [], []],
-        [[], [], [], [0], [0], [0], [], [], []],
-        [[], [], [], [], [], [], [0], [0], [0]],
-        [[], [], [], [], [], [], [0], [0], [0]],
-        [[], [], [], [], [], [], [0], [0], [0]],
-    ]
-    # Populate cube
-    for row in range(9):
-        for col in range(9):
-            if grid[row][col] == 0:
-                for num in list_numbers:
-                    if is_placement_valid(grid, row, col, num):
-                        cube[row][col].append(num)
-    return cube
-
 def remove_same_numbers_from_cube(cube, row, col, num):
     """
     Removes the number from possible solutions of row, col and sub gid.
@@ -148,34 +121,6 @@ def remove_same_numbers_from_cube(cube, row, col, num):
             except ValueError:
                 continue
     return cube
-
-def has_grid_zero(grid):
-    """
-    Check's if sudoku grid is fully populated.
-    :param grid: the grid we want to check.
-    :return: True if grid is not populated and has zeros, False if grid is fully
-    populated without zeros.
-    """
-    for row in range(9):
-        for col in range(9):
-            if grid[row][col] == 0:
-                return True
-    return False
-
-def place_unique_solutions_from_cube(grid,cube):
-    """
-    Check's if cube with possible solutions has unique solutions and place them
-    in sudoku grid.
-    :param grid: the grid we want to place unique solutions.
-    :param cube: cube with possible solutions.
-    :return: grid of sudoku puzzle.
-    """
-    for row in range(9):
-        for col in range(9):
-            if grid[row][col] == 0:
-                if len(cube[row][col]) == 1:
-                    grid[row][col] = cube[row][col][0]
-    return grid
 
 def fill_grid(grid):
     """
@@ -220,6 +165,61 @@ def has_not_45_sums(grid):
             return True
         if list_col[i] !=45:
             return True
+    return False
+
+def find_possible_solutions(grid):
+    """
+    Create a 9x9x9 cube. The third dimension are the possible solutions.
+    :param grid: the grid we want to find the possible solutions of.
+    :return: a cube with possible solutions.
+    """
+    list_numbers = [1, 2, 3, 4, 5, 6, 7, 8, 9]
+    cube = [
+        [[0], [0], [0], [], [], [], [], [], []],
+        [[0], [0], [0], [], [], [], [], [], []],
+        [[0], [0], [0], [], [], [], [], [], []],
+        [[], [], [], [0], [0], [0], [], [], []],
+        [[], [], [], [0], [0], [0], [], [], []],
+        [[], [], [], [0], [0], [0], [], [], []],
+        [[], [], [], [], [], [], [0], [0], [0]],
+        [[], [], [], [], [], [], [0], [0], [0]],
+        [[], [], [], [], [], [], [0], [0], [0]],
+    ]
+    # Populate cube
+    for row in range(9):
+        for col in range(9):
+            if grid[row][col] == 0:
+                for num in list_numbers:
+                    if is_placement_valid(grid, row, col, num):
+                        cube[row][col].append(num)
+    return cube
+
+def place_unique_solutions_from_cube(grid,cube):
+    """
+    Check's if cube with possible solutions has unique solutions and place them
+    in sudoku grid.
+    :param grid: the grid we want to place unique solutions.
+    :param cube: cube with possible solutions.
+    :return: grid of sudoku puzzle.
+    """
+    for row in range(9):
+        for col in range(9):
+            if grid[row][col] == 0:
+                if len(cube[row][col]) == 1:
+                    grid[row][col] = cube[row][col][0]
+    return grid
+
+def has_grid_zero(grid):
+    """
+    Check's if sudoku grid is fully populated.
+    :param grid: the grid we want to check.
+    :return: True if grid is not populated and has zeros, False if grid is fully
+    populated without zeros.
+    """
+    for row in range(9):
+        for col in range(9):
+            if grid[row][col] == 0:
+                return True
     return False
 
 def generate_sudoku():
@@ -306,23 +306,155 @@ def remove_numbers_from_sudoku(level, sudoku_grid):
             clone_sudoku_grid = remove_numbers_from_sudoku(level, sudoku_grid)
         return clone_sudoku_grid
 
+"""
+--------------------------Checks of Player Inputs-------------------------------
+"""
+
+def check_input_level_of_difficulty(user_input):
+    """
+    Check if users input is Easy/Medium/Hard.
+    :param user_input: the input of the player.
+    :return: True if input is Easy/Medium/Hard, False if input is not Easy/
+    Medium/Hard.
+    """
+    if user_input not in ["Easy", "Medium", "Hard"]:
+        print("Please select between Easy/Medium/Hard")
+        return False
+    return True
+
+def check_input_number(user_input):
+    """
+    Check if users input is between 1 and 9.
+    :param user_input: the input of the player.
+    :return: True if input is between 1 and 9, False if input is between 1 and 9.
+    """
+    if  int(user_input) > 9 or int(user_input) < 1:
+        print("Please select a number between 1 to 9!")
+        return False
+    return True
+
+"""
+-------------------------------Player Inputs------------------------------------
+"""
+
+def player_input_difficulty():
+    """
+    Player set the difficulty of sudoku puzzle (Easy/Medium/Hard).
+    :return: difficulty level of sudoku puzzle.
+    """
+    while True:
+        difficulty_level = input(
+            "Please select level of difficulty (Easy/Medium/Hard):")
+        if check_input_level_of_difficulty(difficulty_level):
+            return difficulty_level
+
+def player_input_number():
+    """
+    Player set the number of number, row or column
+    :return: return number of choice of player
+    """
+    while True:
+        input_number = input("Please select a number between 1 to 9: ")
+        if check_input_number(input_number):
+            return int(input_number)
+
+"""
+------------------------------Player Gameplay-----------------------------------
+"""
+
+def is_the_play_valid(grid, removed_numbers_grid, num, row, col):
+    """
+    Return's if play of player is valid or not.
+    :param grid: the grid we want to check that is fully populates.
+    :param removed_numbers_grid: the grid with the removed numbers.
+    :param num: the number which the player wishes to play.
+    :param row: the row that the number is located.
+    :param col: the column that the number is located.
+    :return: True if play of player is valid, False if play of player is not
+    valid.
+    """
+    if removed_numbers_grid[row][col] == 0:
+        if grid[row][col] == num:
+            return True
+    else:
+        print("There is a number in this location.")
+    return False
+
+def update_sudoku_grid(grid, removed_numbers_grid, num, row, col):
+    """
+    Set the number, the player want to make, to the grid with the removed
+    numbers, if the play is valid.
+    :param grid: the grid that was generated.
+    :param removed_numbers_grid: the grid that the numbers are removed and the
+    player want to solve.
+    :param num: the choice of the number of the player that he wants to play.
+    :param row: the row in which player want to play the number.
+    :param col: the row in which player want to play the number.
+    :return: updated_sudoku_grid.
+    """
+    # If play the player want to make is valid
+    if is_the_play_valid(grid, removed_numbers_grid,num,row,col):
+        removed_numbers_grid[row][col] = num
+    else:
+        print("The play is not valid")
+    return removed_numbers_grid
+
+# def undo_play():
+
+def gameplay():
+    """
+    The main function of Player Gameplay in modules_v1.py. Generates sudoku grid,
+    sudoku grid with removed numbers, handles input of player and stops when
+    sudoku puzzle with removed numbers is solved.
+    :return:
+    """
+    grid = generate_sudoku()
+    # Player sets level of difficulty
+    difficulty_level = player_input_difficulty()
+    # Create grid with removed numbers
+    grid_removed_numbers = remove_numbers_from_sudoku(difficulty_level, grid)
+    print_sudoku(grid_removed_numbers)
+    # Main loop of game
+    while has_grid_zero(grid_removed_numbers):
+        # Player inputs
+        player_number = player_input_number()
+        print("For row:")
+        player_row = player_input_number() -1
+        print("For col:")
+        player_col = player_input_number() -1
+        if is_the_play_valid(grid, grid_removed_numbers, player_number,player_row, player_col):
+            grid_removed_numbers[player_row][player_col] = player_number
+        print_sudoku(grid_removed_numbers)
+
 
 """
 ------------------------Basic Print in Formatted Style--------------------------
 """
 def print_sudoku(grid):
     """
-    Prints the Sudoku grid in a formatted style.
+    Prints the Sudoku grid in a formatted style with position indicators.
+    Generated with ChatGPT.
     :param grid: A 9x9 list of lists representing the Sudoku grid.
-    Generated by ChatGPT
     """
+    # Print the top row numbers
+    print("    " + " ".join(f"{i+1} " if (i+1) % 3 != 0 else f"{i+1}| " for i in range(9)))
+    print("  " + "-" * 29)  # Top border separator
+
     for row_index, row in enumerate(grid):
-        if row_index % 3 == 0 and row_index != 0:
-            print("-" * 21)  # Separator between 3x3 blocks
+        # Print row number at the start
+        print(f"{row_index + 1} |", end=" ")
 
         for col_index, num in enumerate(row):
+            # Separator between 3x3 blocks
             if col_index % 3 == 0 and col_index != 0:
-                print("|", end=" ")  # Separator between 3x3 blocks
-            print(f"{num if num != 0 else '.'} ", end="")  # Use '.' for empty cells
+                print("|", end=" ")
+
+            # Print the cell value or '.' for empty cells
+            print(f"{num if num != 0 else '.'} ", end="")
 
         print()  # Newline after each row
+
+        # Separator after every 3 rows
+        if (row_index + 1) % 3 == 0 and row_index != 8:
+            print("  " + "-" * 29)
+
